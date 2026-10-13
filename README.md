@@ -12,9 +12,7 @@ Ejecuta `Iniciar.ps1` en PowerShell desde esta carpeta. Usa las herramientas por
 
 No requiere instalar un IDE. Java, Maven y PostgreSQL se descargaron desde sus proveedores oficiales; no se modificó el PATH global. Los binarios y la contraseña local no forman parte del repositorio.
 
-Para completar los commits y ramas finales desde tu PowerShell: `.\Finalizar-Git.ps1`. La escritura final de `.git` está bloqueada para el entorno del agente. Con un repositorio de GitHub creado y Git autenticado, se puede publicar con `.\Finalizar-Git.ps1 -RemoteUrl https://github.com/USUARIO/prueba-tecnica.git`.
-
-Cuenta indicada: **NicolasYt2121**. En este equipo, ejecutar `.\Publicar-GitHub.ps1` inicia la autenticación oficial de GitHub, finaliza los commits y crea el repositorio privado `NicolasYt2121/prueba-tecnica`. Comprueba la cuenta activa, evita sobrescribir un repositorio con historial y verifica el commit remoto después del push. La publicación no se ha ejecutado todavía.
+Repositorio privado: https://github.com/NicolasYt2121/prueba-tecnica. La entrega se publicó mediante commits desde la interfaz de GitHub. Para continuar en otro equipo, clonar el repositorio con una cuenta autorizada. Los scripts Finalizar-Git.ps1 y Publicar-GitHub.ps1 son herramientas de preparación inicial; no usarlos para sobrescribir el historial remoto.
 
 ## Ejecutar con Docker en otro equipo
 
@@ -43,13 +41,13 @@ cd backend
 java -jar target/banking-1.0.0.jar
 ```
 
-En Linux/macOS: `./mvnw verify`; usar `export` para las variables. Si Maven ya está instalado se puede usar `mvn` directamente. El wrapper descarga Maven 3.9.11. Flyway crea el esquema en el primer arranque; Hibernate lo valida.
+En Linux/macOS: `sh ./mvnw verify`; usar `export` para las variables. Si Maven ya está instalado se puede usar `mvn` directamente. El wrapper descarga Maven 3.9.11. Flyway crea el esquema en el primer arranque; Hibernate lo valida.
 
 ## Pruebas y cobertura
 
 ```bash
 cd backend
-./mvnw verify
+sh ./mvnw verify
 ```
 
 En Windows usar `mvnw.cmd`. Ejecuta los tests unitarios y de controladores. Para incluir los **tests de integración PostgreSQL**, crear una base independiente cuyo nombre termine en `test` (por ejemplo `nexo_test`) y establecer `TEST_DB_URL`, `DB_USER`, `DB_PASSWORD` antes de `verify`. Esas pruebas limpian exclusivamente la base de prueba configurada; no usar la base de demostración.
@@ -101,4 +99,5 @@ Opcional: `node scripts/demo.mjs` carga datos **ficticios** mediante la API. No 
 ## Alcance de la demostración
 
 Sin autenticación de empleados: ejecutar solo localmente. No es un sistema bancario listo para producción. Las decisiones no especificadas —sobregiro de corriente, disponible igual a saldo, GMF como indicador y eliminación lógica con reversión— están documentadas. El código está publicado en GitHub; la aplicación no se ha desplegado como servicio de nube.
+
 
