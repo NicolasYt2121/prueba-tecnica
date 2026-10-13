@@ -1,3 +1,19 @@
+# Verificación de arquitectura hexagonal
+
+13 de octubre de 2026. `mvn verify`: BUILD SUCCESS.
+
+- 52 pruebas de servicios, REST, acceso y arquitectura: 0 fallos, 0 errores.
+- 8 pruebas de integración en PostgreSQL 16.15, base aislada nexo_test: 0 fallos, 0 errores, 0 omitidas.
+- 8 pruebas de componentes frontend: todas aprobadas tras la migración.
+- El núcleo se compiló con javac sin dependencias de Spring/JPA/HTTP.
+- Se verificó que los controladores dependan de los puertos de entrada.
+- JaCoCo: se cumple el mínimo de 80% de líneas por paquete en Service y Controller.
+- No se modificaron migraciones ni datos de la demostración; integración usa una base separada.
+- Compilación realizada en una copia temporal de backend porque Windows mantiene bloqueado el JAR de la versión local en ejecución. La copia contiene los mismos fuentes.
+
+Los reportes actuales están en docs/evidencia. La verificación histórica que sigue corresponde a la entrega inicial, antes de la limpieza de datos y el despliegue cloud.
+
+---
 # Verificación de entrega
 
 Fecha: 13 de octubre de 2026, America/Bogota.
@@ -55,4 +71,6 @@ En el entorno restringido de ejecución, Java no podía resolver los directorios
 - La preparación local conserva tres commits iniciales. El repositorio remoto tiene un historial independiente creado mediante commits desde la interfaz web de GitHub; consultar docs/GIT-FLOW.md antes de sincronizar.
 - Publicación: repositorio privado NicolasYt2121/prueba-tecnica creado y archivos publicados desde el navegador. No se realizó push con GitHub CLI. Los resultados locales de esta página no acreditan por sí solos una ejecución de GitHub Actions.
 - No se desplegaron servicios de nube. No se recibió el PDF original: se trabajó con el enunciado enviado en el chat.
+
+
 
