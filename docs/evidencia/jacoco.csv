@@ -1,0 +1,26 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+Nexo Finanzas,com.nexo.banking.service,TransactionService,0,486,7,54,0,54,7,40,0,16
+Nexo Finanzas,com.nexo.banking.service,AccountService,0,185,1,9,0,17,1,15,0,11
+Nexo Finanzas,com.nexo.banking.service,AccountService.Statement,0,9,0,0,0,1,0,1,0,1
+Nexo Finanzas,com.nexo.banking.service,BusinessException,0,26,0,0,0,4,0,4,0,4
+Nexo Finanzas,com.nexo.banking.service,CustomerService,0,160,1,7,0,17,1,13,0,10
+Nexo Finanzas,com.nexo.banking.controller,CustomerController,0,31,0,0,0,6,0,6,0,6
+Nexo Finanzas,com.nexo.banking.controller,TransactionController,0,31,0,0,0,6,0,6,0,6
+Nexo Finanzas,com.nexo.banking.controller,AccountController,0,37,0,0,0,7,0,7,0,7
+Nexo Finanzas,com.nexo.banking.controller,ApiExceptionHandler,0,64,0,0,0,9,0,10,0,10
+Nexo Finanzas,com.nexo.banking,BankingApplication,5,19,0,0,1,3,1,4,1,4
+Nexo Finanzas,com.nexo.banking,BankingApplication.new JsonSerializer() {...},0,8,0,0,0,3,0,2,0,2
+Nexo Finanzas,com.nexo.banking.dto,Requests.AccountInput,0,12,0,0,0,1,0,1,0,1
+Nexo Finanzas,com.nexo.banking.dto,Requests.CustomerInput,0,21,0,0,0,1,0,1,0,1
+Nexo Finanzas,com.nexo.banking.dto,Requests.AccountUpdate,0,9,0,0,0,1,0,1,0,1
+Nexo Finanzas,com.nexo.banking.dto,Requests.TransactionInput,0,21,0,0,0,1,0,1,0,1
+Nexo Finanzas,com.nexo.banking.dto,Requests.TransactionUpdate,0,6,0,0,0,1,0,1,0,1
+Nexo Finanzas,com.nexo.banking.repository,PostgresAccountNumberGenerator,0,30,0,2,0,3,0,3,0,2
+Nexo Finanzas,com.nexo.banking.entity,FinancialTransaction,0,3,0,0,0,1,0,1,0,1
+Nexo Finanzas,com.nexo.banking.entity,Account,0,15,0,0,0,3,0,1,0,1
+Nexo Finanzas,com.nexo.banking.entity,Customer,0,3,0,0,0,1,0,1,0,1
+Nexo Finanzas,com.nexo.banking.entity,Types.AccountType,0,15,0,0,0,1,0,1,0,1
+Nexo Finanzas,com.nexo.banking.entity,Types.AccountStatus,0,21,0,0,0,1,0,1,0,1
+Nexo Finanzas,com.nexo.banking.entity,Movement,0,3,0,0,0,1,0,1,0,1
+Nexo Finanzas,com.nexo.banking.entity,Types.TransactionType,0,21,0,0,0,1,0,1,0,1
+Nexo Finanzas,com.nexo.banking.entity,Types.IdentificationType,0,21,0,0,0,1,0,1,0,1
