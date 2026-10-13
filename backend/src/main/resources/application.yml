@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: nexo-finanzas
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/nexo}
+    username: ${DB_USER:nexo}
+    password: ${DB_PASSWORD}
+    hikari:
+      connection-init-sql: SET TIME ZONE 'America/Bogota'
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+server:
+  address: ${BIND_ADDRESS:127.0.0.1}
+  port: ${PORT:8080}
+  error:
+    include-message: never
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
