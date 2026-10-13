@@ -1,4 +1,4 @@
-# Arquitectura y decisiones de diseÃ±o
+# Arquitectura y decisiones de diseño
 
 ## Arquitectura elegida
 
@@ -40,28 +40,28 @@ flowchart LR
 
 ## ACID y concurrencia
 
-- **Atomicidad:** consignaciÃ³n, retiro, transferencia y reversiÃ³n ejecutan dentro de los decoradores `@Transactional`. Si una validaciÃ³n o escritura falla, se revierte todo, incluso una transacciÃ³n insertada antes de validar el saldo.
-- **Consistencia:** claves primarias/forÃ¡neas, unicidad, CHECK, trigger de mayorÃ­a de edad y validaciones de negocio. `NUMERIC(19,2)` / `BigDecimal` para dinero. No se calcula dinero con `double` en el backend.
-- **Aislamiento:** `SELECT FOR UPDATE` mediante JPA bloquea cuentas; una transferencia las bloquea por ID ascendente para reducir interbloqueos. La comprobaciÃ³n de saldo usa el saldo bloqueado. El estado de cuenta usa `REPEATABLE_READ` para leer saldo y movimientos de una misma instantÃ¡nea.
-- **Durabilidad:** PostgreSQL confirma sobre WAL; Docker conserva datos en `banking-data`. No se deshabilita `fsync`. Se requiere un esquema de copias de seguridad para producciÃ³n.
+- **Atomicidad:** consignación, retiro, transferencia y reversión ejecutan dentro de los decoradores `@Transactional`. Si una validación o escritura falla, se revierte todo, incluso una transacción insertada antes de validar el saldo.
+- **Consistencia:** claves primarias/foráneas, unicidad, CHECK, trigger de mayoría de edad y validaciones de negocio. `NUMERIC(19,2)` / `BigDecimal` para dinero. No se calcula dinero con `double` en el backend.
+- **Aislamiento:** `SELECT FOR UPDATE` mediante JPA bloquea cuentas; una transferencia las bloquea por ID ascendente para reducir interbloqueos. La comprobación de saldo usa el saldo bloqueado. El estado de cuenta usa `REPEATABLE_READ` para leer saldo y movimientos de una misma instantánea.
+- **Durabilidad:** PostgreSQL confirma sobre WAL; Docker conserva datos en `banking-data`. No se deshabilita `fsync`. Se requiere un esquema de copias de seguridad para producción.
 
-Cliente: apertura y eliminaciÃ³n bloquean primero la fila del cliente. El FK impide que se borre mientras conserve productos. `@Version` aÃ±ade detecciÃ³n de actualizaciones obsoletas en JPA.
+Cliente: apertura y eliminación bloquean primero la fila del cliente. El FK impide que se borre mientras conserve productos. `@Version` añade detección de actualizaciones obsoletas en JPA.
 
-Un `requestId` repetido con mismo tipo, importe y cuentas devuelve la operaciÃ³n existente sin afectar saldos. Con datos distintos devuelve 409. En una carrera simultÃ¡nea, la restricciÃ³n Ãºnica garantiza una sola operaciÃ³n; el segundo puede recibir 409 y debe consultar/reintentar con la misma clave. Cambiar la descripciÃ³n se hace mediante PUT, no mediante un reintento de POST.
+Un `requestId` repetido con mismo tipo, importe y cuentas devuelve la operación existente sin afectar saldos. Con datos distintos devuelve 409. En una carrera simultánea, la restricción única garantiza una sola operación; el segundo puede recibir 409 y debe consultar/reintentar con la misma clave. Cambiar la descripción se hace mediante PUT, no mediante un reintento de POST.
 
-## Reglas y supuestos explÃ­citos
+## Reglas y supuestos explícitos
 
-1. Moneda Ãºnica COP. Fechas de negocio en `America/Bogota`; timestamps almacenados con zona horaria.
-2. Cliente adulto desde su cumpleaÃ±os 18. Se valida tambiÃ©n en escrituras SQL directas.
-3. IdentificaciÃ³n Ãºnica por tipo y nÃºmero. Nombres/apellidos se recortan y necesitan 2 caracteres efectivos. Email con dominio y extensiÃ³n.
-4. Cuentas nuevas activas, saldo cero; prefijos 53 y 33, secuencia global no cÃ­clica de ocho dÃ­gitos. Las secuencias pueden dejar huecos y no se reutilizan.
-5. Cuenta corriente admite saldo negativo porque el enunciado limita explÃ­citamente solo el ahorro. No hay lÃ­mite de sobregiro configurable. Es un supuesto de la prueba, no una polÃ­tica de crÃ©dito lista para producciÃ³n.
+1. Moneda única COP. Fechas de negocio en `America/Bogota`; timestamps almacenados con zona horaria.
+2. Cliente adulto desde su cumpleaños 18. Se valida también en escrituras SQL directas.
+3. Identificación única por tipo y número. Nombres/apellidos se recortan y necesitan 2 caracteres efectivos. Email con dominio y extensión.
+4. Cuentas nuevas activas, saldo cero; prefijos 53 y 33, secuencia global no cíclica de ocho dígitos. Las secuencias pueden dejar huecos y no se reutilizan.
+5. Cuenta corriente admite saldo negativo porque el enunciado limita explícitamente solo el ahorro. No hay límite de sobregiro configurable. Es un supuesto de la prueba, no una política de crédito lista para producción.
 6. Disponible = saldo: el enunciado no define retenciones, bloqueos de fondos ni cupos. Ambos se actualizan conjuntamente y la base comprueba su igualdad.
-7. GMF se registra como indicador; no se calcula impuesto, tarifa ni exclusividad de exenciÃ³n porque no se especificaron.
+7. GMF se registra como indicador; no se calcula impuesto, tarifa ni exclusividad de exención porque no se especificaron.
 8. Solo se opera sobre cuentas activas. No se permiten transferencias a la misma cuenta.
-9. DELETE de producto cancela lÃ³gicamente, exige cero y conserva historial. Una cancelada no se reactiva. Cliente con cualquier producto, incluso cancelado, no se elimina.
-10. CRUD de transacciones: PUT edita descripciÃ³n; DELETE anula una vez y genera movimientos inversos. Importe, tipo y cuentas originales se conservan. Para corregirlos, anular y crear. Una reversiÃ³n que dejarÃ­a ahorros negativos falla completamente.
-11. Demo local para evaluaciÃ³n: sin autenticaciÃ³n, autorizaciÃ³n por operador, paginaciÃ³n, auditorÃ­a de identidad o despliegue pÃºblico. La app y Compose se exponen en loopback. Estos controles deben aÃ±adirse antes de uso real.
+9. DELETE de producto cancela lógicamente, exige cero y conserva historial. Una cancelada no se reactiva. Cliente con cualquier producto, incluso cancelado, no se elimina.
+10. CRUD de transacciones: PUT edita descripción; DELETE anula una vez y genera movimientos inversos. Importe, tipo y cuentas originales se conservan. Para corregirlos, anular y crear. Una reversión que dejaría ahorros negativos falla completamente.
+11. Demo local para evaluación: sin autenticación, autorización por operador, paginación, auditoría de identidad o despliegue público. La app y Compose se exponen en loopback. Estos controles deben añadirse antes de uso real.
 
 ## Nube
 
@@ -71,6 +71,6 @@ La demostración utiliza un servicio Docker gratuito en Render y PostgreSQL en N
 
 - [Spring Boot: requisitos](https://docs.spring.io/spring-boot/3.5/system-requirements.html)
 - [PostgreSQL: transacciones](https://www.postgresql.org/docs/16/tutorial-transactions.html)
-- [PostgreSQL: bloqueos explÃ­citos](https://www.postgresql.org/docs/16/explicit-locking.html)
+- [PostgreSQL: bloqueos explícitos](https://www.postgresql.org/docs/16/explicit-locking.html)
 - [Docker Desktop para Windows](https://docs.docker.com/desktop/setup/install/windows-install/)
 
