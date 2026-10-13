@@ -100,8 +100,15 @@ public class CloudAccessFilter extends OncePerRequestFilter {
     }
 
     private void renderLogin(HttpServletRequest request, HttpServletResponse response, String message) throws IOException {
-        String token = UUID.randomUUID().toString();
-        request.getSession(true).setAttribute(CSRF, token);
+        var session = request.getSession(true);
+        String token;
+        synchronized (session) {
+            token = (String) session.getAttribute(CSRF);
+            if (token == null) {
+                token = UUID.randomUUID().toString();
+                session.setAttribute(CSRF, token);
+            }
+        }
         response.setContentType("text/html;charset=UTF-8");
         response.getWriter().write("""
             <!doctype html><html lang="es"><head><meta charset="utf-8">
