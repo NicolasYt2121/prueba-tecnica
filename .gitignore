@@ -1,0 +1,10 @@
+target/
+.env
+.idea/
+.vscode/
+*.log
+*.pid
+node_modules/
+.tools/
+.data/
+*.zip
