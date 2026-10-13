@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {escapeHtml,badge,empty,table,field,select,csvCell,money} from '../backend/src/main/resources/static/components.mjs';
+test('escapa texto no confiable para evitar XSS',()=>{assert.equal(escapeHtml('<img onerror="x">'), '&lt;img onerror=&quot;x&quot;&gt;');});
+test('badge no permite inyectar clases o HTML',()=>{assert.ok(!badge('<script>').includes('<script>'));assert.match(badge('ACTIVA'),/activa/);});
+test('estado vacío muestra explicación segura',()=>{assert.match(empty('Sin clientes','Registra uno'),/Registra uno/);assert.ok(!empty('<script>','').includes('<script>'));});
+test('tabla incluye encabezados accesibles',()=>{assert.match(table(['Cliente'],['<tr><td>Ana</td></tr>']),/scope="col"/);});
+test('formularios escapan valores y seleccionan opción actual',()=>{assert.match(field('name','Nombre','text','" autofocus'),/&quot; autofocus/);assert.match(select('status','Estado',[['A','Activa'],['I','Inactiva']],'I'),/value="I" selected/);});
+test('CSV neutraliza fórmulas y escapa comillas',()=>{assert.equal(csvCell('=1+1'),'"\'=1+1"');assert.equal(csvCell('a"b'),'"a""b"');});
+test('moneda conserva dos decimales',()=>{assert.match(money(1250.5),/1.250,50/);});
+test('moneda mantiene precisión más allá de Number.MAX_SAFE_INTEGER',()=>{assert.match(money('99999999999999999.99'),/99.999.999.999.999.999,99/);assert.match(money('-0.01'),/^-\$.*0,01/);});
