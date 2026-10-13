@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.nexo.banking.ArchitectureTest
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 10.32 s -- in com.nexo.banking.ArchitectureTest
