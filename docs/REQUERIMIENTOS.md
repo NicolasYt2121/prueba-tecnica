@@ -5,7 +5,7 @@ El enunciado fue proporcionado como texto. No se recibió el PDF original; este 
 | Requisito | Implementación |
 |---|---|
 | Java backend y capas entity/service/controller/repository | Spring Boot, paquetes en `com.nexo.banking` |
-| MVC o hexagonal | MVC por capas, decisión en ARQUITECTURA.md |
+| MVC o hexagonal | Hexagonal: núcleo Java, puertos de entrada/salida y adaptadores REST/JPA; ARQUITECTURA-HEXAGONAL.md |
 | PostgreSQL, MySQL, SQL Server u Oracle | PostgreSQL 16 |
 | Cliente CRUD con identificación, nombres, correo, nacimiento y fechas | CustomerService + CustomerController |
 | Mayoría de edad, creación automática, modificación automática | Validación Java, trigger SQL, Clock |
@@ -27,3 +27,4 @@ El enunciado fue proporcionado como texto. No se recibió el PDF original; este 
 | SOLID, patrones, ACID, DML/DDL | ARQUITECTURA.md, DML.sql, migración Flyway |
 | Servicios nube usados | Ninguno desplegado; GitHub Actions preparado |
 | Git/GitHub, ramas, commits/push | Historial local por etapas; publicación requiere remoto y autenticación |
+

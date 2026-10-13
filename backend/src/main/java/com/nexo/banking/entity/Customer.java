@@ -2,7 +2,7 @@ package com.nexo.banking.entity;
 
 import jakarta.persistence.*;
 import java.time.*;
-import com.nexo.banking.entity.Types.IdentificationType;
+import com.nexo.banking.domain.model.Types.IdentificationType;
 
 @Entity @Table(name="customers")
 public class Customer {

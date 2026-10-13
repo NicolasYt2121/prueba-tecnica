@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.nexo.banking.BankingIT
 -------------------------------------------------------------------------------
-Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 33.35 s -- in com.nexo.banking.BankingIT
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 26.01 s -- in com.nexo.banking.BankingIT

@@ -1,9 +1,10 @@
 package com.nexo.banking;
 
-import com.nexo.banking.dto.Requests.*;
-import com.nexo.banking.entity.*;
-import com.nexo.banking.entity.Types.*;
+import com.nexo.banking.application.Commands.*;
+import com.nexo.banking.domain.model.*;
+import com.nexo.banking.domain.model.Types.*;
 import com.nexo.banking.service.*;
+import com.nexo.banking.application.port.in.*;
 import com.nexo.banking.repository.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -27,7 +28,7 @@ class BankingIT {
         if(!url.matches("jdbc:postgresql://[^/]+/[A-Za-z0-9_]*test(?:\\?.*)?")) throw new IllegalArgumentException("TEST_DB_URL debe apuntar a una base dedicada cuyo nombre termine en test");
         registry.add("spring.datasource.url",()->url);
     }
-    @Autowired CustomerService customers; @Autowired AccountService accounts; @Autowired TransactionService transactions;
+    @Autowired CustomerUseCases customers; @Autowired AccountUseCases accounts; @Autowired TransactionUseCases transactions;
     @Autowired TransactionRepository transactionRepository; @Autowired MovementRepository movementRepository; @Autowired JdbcTemplate jdbc;
     Long owner;
     @BeforeEach void prepare() {
@@ -35,7 +36,7 @@ class BankingIT {
         owner=customers.create(new CustomerInput(IdentificationType.CC,"900001","Cliente","Prueba","test@example.com",LocalDate.of(1990,1,1))).id;
     }
     Account account(AccountType type) { return accounts.create(new AccountInput(owner,type,false)); }
-    FinancialTransaction deposit(Long account,String amount) {return transactions.create(new TransactionInput(UUID.randomUUID(),TransactionType.CONSIGNACION,null,account,new BigDecimal(amount),"Prueba de integración"));}
+    FinancialTransaction deposit(Long account,String amount) {return transactions.create(new TransactionInput(UUID.randomUUID(),TransactionType.CONSIGNACION,null,account,new BigDecimal(amount),"Prueba de integraciÃ³n"));}
     @Test void postgresGeneratesUniqueNumbersAndEnforcesAdultAndForeignKey() {
         Account a=account(AccountType.AHORROS),b=account(AccountType.CORRIENTE);
         assertThat(a.number).matches("53\\d{8}");assertThat(b.number).matches("33\\d{8}");assertThat(a.number).isNotEqualTo(b.number);

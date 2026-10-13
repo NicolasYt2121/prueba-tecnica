@@ -1,6 +1,6 @@
 package com.nexo.banking.repository;
-import com.nexo.banking.service.AccountNumberGenerator;
-import com.nexo.banking.entity.Types.AccountType;
+import com.nexo.banking.application.port.out.AccountNumberGenerator;
+import com.nexo.banking.domain.model.Types.AccountType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 @Component

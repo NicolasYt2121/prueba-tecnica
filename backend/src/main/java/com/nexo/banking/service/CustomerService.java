@@ -1,31 +1,28 @@
 package com.nexo.banking.service;
-import com.nexo.banking.entity.Customer;
-import com.nexo.banking.dto.Requests.CustomerInput;
-import com.nexo.banking.repository.*;
+import com.nexo.banking.application.port.in.CustomerUseCases;
+import com.nexo.banking.domain.model.Customer;
+import com.nexo.banking.application.Commands.CustomerInput;
+import com.nexo.banking.application.port.out.*;
 import java.time.*;
 import java.util.List;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-@Service @Transactional(readOnly=true)
-public class CustomerService {
+public class CustomerService implements CustomerUseCases {
     private final CustomerRepository customers;
     private final AccountRepository accounts;
     private final Clock clock;
     public CustomerService(CustomerRepository customers,AccountRepository accounts,Clock clock) {
         this.customers=customers; this.accounts=accounts; this.clock=clock;
     }
-    public List<Customer> list() { return customers.findAll(Sort.by(Sort.Direction.DESC,"id")); }
+    public List<Customer> list() { return customers.findAll(); }
     public Customer get(Long id) { return customers.findById(id).orElseThrow(()->BusinessException.notFound("Cliente")); }
-    @Transactional public Customer create(CustomerInput input) {
+    public Customer create(CustomerInput input) {
         Customer c=new Customer(); c.createdAt=clock.instant(); fill(c,input); return customers.save(c);
     }
-    @Transactional public Customer update(Long id,CustomerInput input) {
+    public Customer update(Long id,CustomerInput input) {
         Customer c=customers.lockById(id).orElseThrow(()->BusinessException.notFound("Cliente")); fill(c,input); return customers.save(c);
     }
-    @Transactional public void delete(Long id) {
+    public void delete(Long id) {
         Customer c=customers.lockById(id).orElseThrow(()->BusinessException.notFound("Cliente"));
-        if(accounts.existsByCustomerId(id)) throw BusinessException.conflict("El cliente tiene productos vinculados, incluso si están cancelados");
+        if(accounts.existsByCustomerId(id)) throw BusinessException.conflict("El cliente tiene productos vinculados, incluso si estÃ¡n cancelados");
         customers.delete(c);
     }
     private void fill(Customer c,CustomerInput in) {

@@ -3,7 +3,7 @@ package com.nexo.banking.entity;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.Instant;
-import com.nexo.banking.entity.Types.*;
+import com.nexo.banking.domain.model.Types.*;
 
 @Entity @Table(name="accounts")
 public class Account {

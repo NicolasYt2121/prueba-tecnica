@@ -1,8 +1,8 @@
 package com.nexo.banking.service;
-import com.nexo.banking.dto.Requests.*;
-import com.nexo.banking.entity.*;
-import com.nexo.banking.entity.Types.*;
-import com.nexo.banking.repository.*;
+import com.nexo.banking.application.Commands.*;
+import com.nexo.banking.domain.model.*;
+import com.nexo.banking.domain.model.Types.*;
+import com.nexo.banking.application.port.out.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -30,7 +30,7 @@ class TransactionServiceTest {
     @ParameterizedTest @ValueSource(strings={"0","-1","0.001","100000000000000000.00"}) void rejectsBadAmounts(String amount) {assertThatThrownBy(()->service.create(input(TransactionType.RETIRO,1L,null,amount))).isInstanceOf(BusinessException.class);verifyNoInteractions(accounts,movements);}
     @Test void rejectsWrongAccountCombinations() {for(TransactionInput in:List.of(input(TransactionType.TRANSFERENCIA,1L,1L,"1"),input(TransactionType.TRANSFERENCIA,1L,null,"1"),input(TransactionType.CONSIGNACION,1L,2L,"1"),input(TransactionType.RETIRO,null,2L,"1"))) assertThatThrownBy(()->service.create(in)).hasMessageContaining("incompatibles");}
     @Test void rejectsInactiveAndMissingAccounts() {Account a=account(1,"20",AccountType.AHORROS);a.status=AccountStatus.INACTIVA;assertThatThrownBy(()->service.create(input(TransactionType.RETIRO,1L,null,"1"))).hasMessageContaining("activa");assertThatThrownBy(()->service.create(input(TransactionType.RETIRO,99L,null,"1"))).hasMessageContaining("no encontrado");}
-    @Test void preventsNumericOverflow() {account(1,"99999999999999999.99",AccountType.AHORROS);save();assertThatThrownBy(()->service.create(input(TransactionType.CONSIGNACION,null,1L,"1"))).hasMessageContaining("límite");}
+    @Test void preventsNumericOverflow() {account(1,"99999999999999999.99",AccountType.AHORROS);save();assertThatThrownBy(()->service.create(input(TransactionType.CONSIGNACION,null,1L,"1"))).hasMessageContaining("lÃ­mite");}
     @Test void idempotentRetryDoesNotDebitTwice() {var in=input(TransactionType.RETIRO,1L,null,"10");FinancialTransaction t=new FinancialTransaction();t.requestId=in.requestId();t.type=in.type();t.sourceAccountId=1L;t.amount=in.amount();when(transactions.findByRequestId(in.requestId())).thenReturn(Optional.of(t));assertThat(service.create(in)).isSameAs(t);verifyNoInteractions(accounts,movements);assertThatThrownBy(()->service.create(new TransactionInput(in.requestId(),in.type(),1L,null,new BigDecimal("11"),""))).hasMessageContaining("idempotencia");}
     @Test void reversesTransferAndSecondDeleteDoesNothing() {Account a=account(1,"60",AccountType.AHORROS),b=account(2,"40",AccountType.AHORROS);FinancialTransaction t=new FinancialTransaction();t.id=7L;t.sourceAccountId=1L;t.destinationAccountId=2L;t.amount=new BigDecimal("40");when(transactions.lockById(7L)).thenReturn(Optional.of(t));service.delete(7L);service.delete(7L);assertThat(a.balance).isEqualByComparingTo("100");assertThat(b.balance).isEqualByComparingTo("0");assertThat(t.reversed).isTrue();assertThat(t.reversedAt).isEqualTo(clock.instant());verify(movements,times(2)).save(argThat(m->m.reversal));}
     @Test void updatesOnlyDescriptionAndRejectsReversed() {FinancialTransaction t=new FinancialTransaction();when(transactions.lockById(7L)).thenReturn(Optional.of(t));service.update(7L,new TransactionUpdate(" Nota "));assertThat(t.description).isEqualTo("Nota");t.reversed=true;assertThatThrownBy(()->service.update(7L,new TransactionUpdate("Otro"))).hasMessageContaining("anulada");}
