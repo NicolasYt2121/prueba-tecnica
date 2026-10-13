@@ -1,0 +1,36 @@
+# PostgreSQL externo en Neon Free. No crea una base de pago en Render.
+# Completar secretos en Render; nunca guardarlos en Git.
+services:
+  - type: web
+    name: prueba-tecnica-nicolas
+    runtime: docker
+    plan: free
+    region: ohio
+    branch: main
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: cloud
+      - key: APP_ACCESS_USER
+        value: nicolas
+      - key: APP_ACCESS_PASSWORD
+        generateValue: true
+      - key: BIND_ADDRESS
+        value: 0.0.0.0
+      - key: PORT
+        value: 10000
+      - key: JAVA_TOOL_OPTIONS
+        value: -Xms64m -Xmx256m
+      - key: SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE
+        value: 3
+      - key: SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE
+        value: 0
+      # jdbc:postgresql://HOST/BASE?sslmode=require
+      - key: DB_URL
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
