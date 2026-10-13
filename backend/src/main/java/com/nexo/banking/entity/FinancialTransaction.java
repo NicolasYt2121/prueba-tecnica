@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
-import com.nexo.banking.entity.Types.TransactionType;
+import com.nexo.banking.domain.model.Types.TransactionType;
 
 @Entity @Table(name="financial_transactions")
 public class FinancialTransaction {
