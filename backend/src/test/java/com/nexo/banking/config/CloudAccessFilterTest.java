@@ -53,9 +53,15 @@ class CloudAccessFilterTest {
         filter.doFilter(page, html, (req, res) -> fail("Login should be handled by filter"));
         assertTrue(html.getContentAsString().contains("Iniciar sesión"));
         var oldSession = (org.springframework.mock.web.MockHttpSession) page.getSession();
+        String firstTabToken = (String) oldSession.getAttribute("nexo.loginCsrf");
+        var secondTab = new MockHttpServletRequest("GET", "/login");
+        secondTab.setSession(oldSession);
+        filter.doFilter(secondTab, new MockHttpServletResponse(), (req, res) -> fail());
+        assertEquals(firstTabToken, oldSession.getAttribute("nexo.loginCsrf"),
+                "Opening another tab must not invalidate the first tab's form");
         var post = new MockHttpServletRequest("POST", "/login");
         post.setSession(oldSession);
-        post.setParameter("csrf", (String) oldSession.getAttribute("nexo.loginCsrf"));
+        post.setParameter("csrf", firstTabToken);
         post.setParameter("username", "demo");
         post.setParameter("password", "test-only-password-123");
         var response = new MockHttpServletResponse();
