@@ -100,4 +100,5 @@ Opcional: `node scripts/demo.mjs` carga datos **ficticios** mediante la API. No 
 
 ## Alcance de la demostración
 
-Sin autenticación de empleados: ejecutar solo localmente. No es un sistema bancario listo para producción. Las decisiones no especificadas —sobregiro de corriente, disponible igual a saldo, GMF como indicador y eliminación lógica con reversión— están documentadas. No se ha desplegado un servicio de nube ni publicado un repositorio mientras falten el remoto y la autenticación de GitHub.
+Sin autenticación de empleados: ejecutar solo localmente. No es un sistema bancario listo para producción. Las decisiones no especificadas —sobregiro de corriente, disponible igual a saldo, GMF como indicador y eliminación lógica con reversión— están documentadas. El código está publicado en GitHub; la aplicación no se ha desplegado como servicio de nube.
+
