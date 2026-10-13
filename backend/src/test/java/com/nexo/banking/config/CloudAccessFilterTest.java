@@ -26,12 +26,12 @@ class CloudAccessFilterTest {
         return "Basic " + Base64.getEncoder().encodeToString(("demo:" + password).getBytes(StandardCharsets.UTF_8));
     }
     @Test void requiresCredentialsForPageAndApi() throws Exception {
-        assertEquals(401, run("GET", "/", null, null, false).getStatus());
+        assertEquals("/login", run("GET", "/", null, null, false).getRedirectedUrl());
         assertEquals(401, run("GET", "/api/customers", null, null, false).getStatus());
     }
     @Test void rejectsInvalidCredentials() throws Exception {
-        assertEquals(401, run("GET", "/", "Basic !!!", null, false).getStatus());
-        assertEquals(401, run("GET", "/", auth("wrong"), null, false).getStatus());
+        assertEquals(401, run("GET", "/api/customers", "Basic !!!", null, false).getStatus());
+        assertEquals(401, run("GET", "/api/customers", auth("wrong"), null, false).getStatus());
     }
     @Test void permitsAuthenticatedReads() throws Exception {
         assertEquals(200, run("GET", "/api/customers", auth("test-only-password-123"), null, true).getStatus());
@@ -46,5 +46,41 @@ class CloudAccessFilterTest {
     }
     @Test void failsClosedForWeakConfiguration() {
         assertThrows(IllegalArgumentException.class, () -> new CloudAccessFilter("demo", "short"));
+    }
+    @Test void browserLoginRotatesSessionAndGrantsAccess() throws Exception {
+        var page = new MockHttpServletRequest("GET", "/login");
+        var html = new MockHttpServletResponse();
+        filter.doFilter(page, html, (req, res) -> fail("Login should be handled by filter"));
+        assertTrue(html.getContentAsString().contains("Iniciar sesión"));
+        var oldSession = (org.springframework.mock.web.MockHttpSession) page.getSession();
+        var post = new MockHttpServletRequest("POST", "/login");
+        post.setSession(oldSession);
+        post.setParameter("csrf", (String) oldSession.getAttribute("nexo.loginCsrf"));
+        post.setParameter("username", "demo");
+        post.setParameter("password", "test-only-password-123");
+        var response = new MockHttpServletResponse();
+        filter.doFilter(post, response, (req, res) -> fail());
+        assertEquals(303, response.getStatus());
+        assertTrue(oldSession.isInvalid());
+        var next = new MockHttpServletRequest("GET", "/api/customers");
+        next.setSession((org.springframework.mock.web.MockHttpSession) post.getSession());
+        var passed = new AtomicBoolean();
+        filter.doFilter(next, new MockHttpServletResponse(), (req, res) -> passed.set(true));
+        assertTrue(passed.get());
+    }
+    @Test void browserLoginRejectsMissingCsrfAndWrongPassword() throws Exception {
+        assertEquals(403, run("POST", "/login", null, null, false).getStatus());
+        var page = new MockHttpServletRequest("GET", "/login");
+        filter.doFilter(page, new MockHttpServletResponse(), (req, res) -> fail());
+        var post = new MockHttpServletRequest("POST", "/login");
+        post.setSession((org.springframework.mock.web.MockHttpSession) page.getSession());
+        post.setParameter("csrf", (String) page.getSession().getAttribute("nexo.loginCsrf"));
+        post.setParameter("username", "demo");
+        post.setParameter("password", "incorrecta");
+        var response = new MockHttpServletResponse();
+        filter.doFilter(post, response, (req, res) -> fail());
+        assertEquals(401, response.getStatus());
+        assertTrue(response.getContentAsString().contains("incorrectos"));
+        assertNull(post.getSession().getAttribute("nexo.authenticated"));
     }
 }
